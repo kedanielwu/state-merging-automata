@@ -1,2 +1,4 @@
 .idea/
 state-merging-automata.iml
+out/
+*.iml

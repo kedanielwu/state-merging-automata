@@ -1,15 +1,12 @@
 import dk.brics.automaton.Automaton;
-import dk.brics.automaton.RegExp;
 import dk.brics.automaton.State;
 import dk.brics.automaton.Transition;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 public class Main {
-    public Automaton stringToAutomata(String input) {
+    public static Automaton stringToAutomaton(String input) {
         //storage
         Map<String, State> states = new HashMap();
         //initial state
@@ -45,11 +42,48 @@ public class Main {
         return out;
     }
 
+    public static String automatonToString (Automaton input) {
+        StringBuilder sb = new StringBuilder();
+        Map<State, Integer> stateName = new HashMap<>();
+        for (State state : input.getStates()) {
+            String s = state.toString();
+            String[] strings = s.split("\n");
+            sb.append(strings[0].split(" ")[1] + " ");
+
+            if(state.equals(input.getInitialState()))
+                sb.append("Y ");
+            else
+                sb.append("N ");
+
+            if(state.isAccept())
+                sb.append("Y ");
+            else
+                sb.append("N ");
+
+            for (int i = 1; i < strings.length; i++) {
+                String transition = strings[i];
+                transition = transition.trim().replace(" -> ", "-");
+                sb.append(transition + " ");
+            }
+            sb.append("\n");
+        }
+
+
+        return sb.toString();
+    }
+
     public static void main(String[] args) {
         String strInput =
-                "s1 Y N 1-s2 0-s3 \n" +
-                        "s2 N Y 1-s3 0-s4 \n" +
-                        "s3 N N 0-s2 1-s4 \n" +
-                        "s4 N Y \n";
+                    "s1 Y N 1-s2 0-s3 \n" +
+                            "s2 N Y 1-s3 0-s4 \n" +
+                            "s3 N N 0-s2 1-s4 \n" +
+                            "s4 N Y \n";
+
+        Automaton a = stringToAutomaton(strInput);
+
+
+        String s = automatonToString(a);
+
+        System.out.println(s);
     }
 }

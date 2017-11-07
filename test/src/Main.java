@@ -43,8 +43,9 @@ public class Main {
     }
 
     public static String automatonToString (Automaton input) {
+
         StringBuilder sb = new StringBuilder();
-        Map<State, Integer> stateName = new HashMap<>();
+
         for (State state : input.getStates()) {
             String s = state.toString();
             String[] strings = s.split("\n");

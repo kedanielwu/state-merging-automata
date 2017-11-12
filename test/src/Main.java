@@ -2,8 +2,10 @@ import dk.brics.automaton.Automaton;
 import dk.brics.automaton.State;
 import dk.brics.automaton.Transition;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 public class Main {
     public static Automaton stringToAutomaton(String input) {
@@ -73,18 +75,68 @@ public class Main {
         return sb.toString();
     }
 
+
+    public static void RPNIMerge (Automaton A, State red, State blue) {
+        Set<State> allStates = A.getStates();
+
+
+
+        if (!allStates.contains(blue)
+                || !allStates.contains(red)
+                || A.getInitialState().equals(blue))
+            throw new IllegalArgumentException();
+
+        for (State state : allStates) {
+            for (Transition transition : state.getTransitions()) {
+                if (transition.getDest().equals(blue))
+                    transition.setDest(red);
+            }
+        }
+
+        RPNIFold(A, red, blue);
+
+    }
+
+    public static void RPNIFold (Automaton A, State red, State blue) {
+        Set<State> allStates = A.getStates();
+
+        if (!allStates.contains(red))
+            throw new IllegalArgumentException();
+
+        if (blue.isAccept())
+            red.setAccept(true);
+
+        String chars = "01";
+
+        for (char c : chars.toCharArray()) {
+            if (blue.step(c) != null) {
+                if (red.step(c) != null) {
+                    RPNIFold(A, red.step(c), blue.step(c));
+                } else {
+                    red.addTransition(new Transition(c, blue.step(c)));
+                }
+            }
+        }
+    }
+
     public static void main(String[] args) {
         String strInput =
-                    "s1 Y N 1-s2 0-s3 \n" +
-                            "s2 N Y 1-s3 0-s4 \n" +
-                            "s3 N N 0-s2 1-s4 \n" +
+                    "s1 Y N 0-s2 1-s3 \n" +
+                            "s2 N Y \n" +
+                            "s3 N Y 1-s4 \n" +
                             "s4 N Y \n";
 
         Automaton a = stringToAutomaton(strInput);
 
 
+        RPNIMerge(a, a.getInitialState().step('0'), a.getInitialState().step('1'));
+
         String s = automatonToString(a);
 
+        System.out.println(a);
+
         System.out.println(s);
+
     }
 }
+

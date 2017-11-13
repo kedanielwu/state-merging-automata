@@ -10,7 +10,7 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$USER_HOME$/Downloads/automaton-1.12/dist/automaton.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../dk.brics.automaton/dist/automaton.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />

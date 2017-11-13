@@ -2,10 +2,9 @@ import dk.brics.automaton.Automaton;
 import dk.brics.automaton.State;
 import dk.brics.automaton.Transition;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.util.*;
 
 public class Main {
     public static Automaton stringToAutomaton(String input) {
@@ -79,11 +78,16 @@ public class Main {
     public static void RPNIMerge (Automaton A, State red, State blue) {
         Set<State> allStates = A.getStates();
 
+        if (red == null || blue == null)
+            throw new NullPointerException();
 
+        if (!allStates.contains(blue))
+            throw new IllegalArgumentException();
 
-        if (!allStates.contains(blue)
-                || !allStates.contains(red)
-                || A.getInitialState().equals(blue))
+        if (!allStates.contains(red))
+            throw new IllegalArgumentException();
+
+        if (A.getInitialState().equals(blue))
             throw new IllegalArgumentException();
 
         for (State state : allStates) {
@@ -98,7 +102,9 @@ public class Main {
     }
 
     public static void RPNIFold (Automaton A, State red, State blue) {
+
         Set<State> allStates = A.getStates();
+        //System.out.println(allStates.size());
 
         if (!allStates.contains(red))
             throw new IllegalArgumentException();
@@ -110,33 +116,102 @@ public class Main {
 
         for (char c : chars.toCharArray()) {
             if (blue.step(c) != null) {
-                if (red.step(c) != null) {
-                    RPNIFold(A, red.step(c), blue.step(c));
+                if (red.step(c) != null ) {
+//
+                    if(red.step(c).equals(blue) && blue.step(c).equals(red)) {
+
+                        for(Transition t : red.getTransitions()) {
+                            if (t.getMin() == c) {
+                                t.setDest(red);
+                            }
+                        }
+                    } else if (!red.step(c).equals(red)) {
+                        System.out.println(red.hashCode() - red.step(c).hashCode());
+                        RPNIFold(A, red.step(c), blue.step(c));
+                    }
                 } else {
-                    red.addTransition(new Transition(c, blue.step(c)));
+//                    if (blue.step(c).equals(blue))
+//                        red.addTransition(new Transition(c, red));
+//                    else
+                        red.addTransition(new Transition(c, blue.step(c)));
                 }
             }
         }
     }
 
-    public static void main(String[] args) {
+    static int WHITE = 0;
+    static int RED = 1;
+    static int BLUE = 2;
+
+    public static Automaton Shrink (Automaton A, Collection<String> example) {
+        Automaton result = null;
+        float score = 0.0f;
+
+        Set<State> allStates = A.getStates();
+
+        for (State s : allStates) {
+            s.setColour(WHITE);
+        }
+
+        for (State red : allStates) {
+            red.setColour(RED);
+            for (State blue : allStates) {
+                if (!A.getInitialState().equals(blue) && !blue.equals(red)) {
+                    blue.setColour(BLUE);
+                    Automaton clone = A.clone();
+                    State cloneRed = null, cloneBlue = null;
+
+                    for (State s : clone.getStates()) {
+                        if (s.getColour() == RED) cloneRed = s;
+                        if (s.getColour() == BLUE) cloneBlue = s;
+                    }
+
+                    RPNIMerge(clone, cloneRed, cloneBlue);
+                    float testScore = TestAutomatonConsistency(A, clone, example);
+                    if (testScore > score) {
+                        result = clone;
+                        score = testScore;
+                    }
+                    blue.setColour(WHITE);
+                }
+            }
+            red.setColour(WHITE);
+
+        }
+
+
+        return result;
+    }
+
+
+    private static float TestAutomatonConsistency (Automaton origin, Automaton shrinked, Collection<String> example) {
+        int consistent = 0;
+        for (String s : example) {
+            if (origin.run(s) == shrinked.run(s)) consistent++;
+        }
+        return (float) consistent / example.size() ;
+    }
+
+    public static void main(String[] args) throws Exception {
         String strInput =
-                    "s1 Y N 0-s2 1-s3 \n" +
-                            "s2 N Y \n" +
-                            "s3 N Y 1-s4 \n" +
-                            "s4 N Y \n";
+                    "s1 Y N 1-s2 0-s3 \n" +
+                            "s2 N N 1-s4 0-s5\n" +
+                            "s3 N Y \n" +
+                            "s4 N Y 1-s4\n" +
+                            "s5 N Y \n";
 
         Automaton a = stringToAutomaton(strInput);
+        ArrayList<String> example = new ArrayList<>(Arrays.asList("0", "1", "00", "111", "10", "0111"));
 
+        BufferedWriter writer = new BufferedWriter(new FileWriter("test.dot"));
+        writer.write(a.toDot());
+        writer.close();
 
-        RPNIMerge(a, a.getInitialState().step('0'), a.getInitialState().step('1'));
+        Automaton result = Shrink(a, example);
 
-        String s = automatonToString(a);
-
-        System.out.println(a);
-
-        System.out.println(s);
-
+        BufferedWriter writer1 = new BufferedWriter(new FileWriter("result.dot"));
+        writer1.write(result.toDot());
+        writer1.close();
     }
 }
 

@@ -183,6 +183,15 @@ public class Main {
         return result;
     }
 
+    public static Automaton RShrink(Automaton A, Collection<String> example, int limit) {
+        Automaton shrunk = Shrink(A, example);
+        if (shrunk.getStates().size() > limit)
+            return RShrink(shrunk, example, limit);
+        else
+            return shrunk;
+        
+    }
+
 
     private static float TestAutomatonConsistency (Automaton origin, Automaton shrinked, Collection<String> example) {
         int consistent = 0;

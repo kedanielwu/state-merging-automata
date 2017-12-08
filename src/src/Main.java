@@ -8,69 +8,6 @@ import java.util.*;
 
 public class Main {
 
-    public static void RPNIMerge (Automaton A, State red, State blue) {
-        Set<State> allStates = A.getStates();
-
-        if (red == null || blue == null)
-            throw new NullPointerException();
-
-        if (!allStates.contains(blue))
-            throw new IllegalArgumentException();
-
-        if (!allStates.contains(red))
-            throw new IllegalArgumentException();
-
-        if (A.getInitialState().equals(blue))
-            throw new IllegalArgumentException();
-
-        for (State state : allStates) {
-            for (Transition transition : state.getTransitions()) {
-                if (transition.getDest().equals(blue))
-                    transition.setDest(red);
-            }
-        }
-
-        RPNIFold(A, red, blue);
-
-    }
-
-    public static void RPNIFold (Automaton A, State red, State blue) {
-
-        Set<State> allStates = A.getStates();
-        //System.out.println(allStates.size());
-
-        if (!allStates.contains(red))
-            throw new IllegalArgumentException();
-
-        if (blue.isAccept())
-            red.setAccept(true);
-
-        String chars = "01";
-
-        for (char c : chars.toCharArray()) {
-            if (blue.step(c) != null) {
-                if (red.step(c) != null ) {
-//
-                    if(red.step(c).equals(blue) && blue.step(c).equals(red)) {
-
-                        for(Transition t : red.getTransitions()) {
-                            if (t.getMin() == c) {
-                                t.setDest(red);
-                            }
-                        }
-                    } else if (!red.step(c).equals(red)) {
-                        RPNIFold(A, red.step(c), blue.step(c));
-                    }
-                } else {
-//                    if (blue.step(c).equals(blue))
-//                        red.addTransition(new Transition(c, red));
-//                    else
-                        red.addTransition(new Transition(c, blue.step(c)));
-                }
-            }
-        }
-    }
-
     static int WHITE = 0;
     static int RED = 1;
     static int BLUE = 2;
@@ -98,7 +35,7 @@ public class Main {
                         if (s.getColour() == BLUE) cloneBlue = s;
                     }
 
-                    RPNIMerge(clone, cloneRed, cloneBlue);
+                    RPNI.merge(clone, cloneRed, cloneBlue);
                     float testScore = TestAutomatonConsistency(A, clone, example);
                     if (testScore > score) {
                         result = clone;
@@ -157,7 +94,7 @@ public class Main {
                                 if (s.getColour() == BLUE) cloneBlue = s;
                             }
 
-                            RPNIMerge(clone, cloneRed, cloneBlue);
+                            RPNI.merge(clone, cloneRed, cloneBlue);
                             queue.add(clone);
                             blue.setColour(WHITE);
                         }
@@ -212,7 +149,7 @@ public class Main {
 //        Automaton result1 = MostCons(a, example, 3);
 
 
-        Automaton result3 = TestGenerator.GenerateAutomaton(20);
+        Automaton result3 = TestGenerator.generateAutomaton(20);
         BufferedWriter writer3 = new BufferedWriter(new FileWriter("result-PTA.dot"));
         writer3.write(result3.toDot());
         writer3.close();

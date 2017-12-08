@@ -12,7 +12,7 @@ public class TestGenerator {
     private static final int MAX = 233333;
 
 
-    public static Set<String> GenerateExamples(int count, int bound) {
+    public static Set<String> generateExamples(int count, int bound) {
         if (bound <= 0) throw new IllegalArgumentException();
         Set<String> examples = new HashSet<>();
         while (examples.size() < count) {
@@ -22,11 +22,11 @@ public class TestGenerator {
         return examples;
     }
 
-    public static Set<String> GenerateExamples(int count) {
-        return GenerateExamples(count, MAX);
+    public static Set<String> generateExamples(int count) {
+        return generateExamples(count, MAX);
     }
 
-    public static Automaton GeneratePTA (Collection<String> example) {
+    public static Automaton generatePTA (Collection<String> example) {
         Automaton result = new Automaton();
         State init = new State();
         result.setInitialState(init);
@@ -48,15 +48,15 @@ public class TestGenerator {
         return result;
     }
 
-    public static Automaton GenerateAutomaton (int lowerbound) {
+    public static Automaton generateAutomaton (int lowerbound) {
         Automaton result = new Automaton();
         Set<String> example = new HashSet<>();
-        for (String s : GenerateExamples(lowerbound/2)) {
+        for (String s : generateExamples(lowerbound/2)) {
             example.add(s.substring(0, s.length()/2));
             example.add(s.substring(s.length()/2));
         }
         while (result.getStates().size() < lowerbound) {
-            result = GeneratePTA(example);
+            result = generatePTA(example);
         }
         return result;
     }

@@ -126,7 +126,6 @@ public class Main {
                             }
                         }
                     } else if (!red.step(c).equals(red)) {
-                        System.out.println(red.hashCode() - red.step(c).hashCode());
                         RPNIFold(A, red.step(c), blue.step(c));
                     }
                 } else {
@@ -192,6 +191,52 @@ public class Main {
         
     }
 
+    public static Automaton MostCons(Automaton A, Collection<String> example, int limit) {
+        Automaton result = null;
+        float maxConsistency = 0;
+        Queue<Automaton> queue = new LinkedList<>();
+        queue.add(A);
+        while (!queue.isEmpty()) {
+            Automaton current = queue.remove();
+            if (current.getStates().size() <= limit) {
+                float consistency = TestAutomatonConsistency(A, current, example);
+                if (consistency > maxConsistency) {
+                    maxConsistency = consistency;
+                    result = current;
+                }
+            } else {
+                Set<State> allStates = current.getStates();
+
+                for (State s : allStates) {
+                    s.setColour(WHITE);
+                }
+
+                for (State red : allStates) {
+                    red.setColour(RED);
+                    for (State blue : allStates) {
+                        if (!current.getInitialState().equals(blue) && !blue.equals(red)) {
+                            blue.setColour(BLUE);
+                            Automaton clone = current.clone();
+                            State cloneRed = null, cloneBlue = null;
+
+                            for (State s : clone.getStates()) {
+                                if (s.getColour() == RED) cloneRed = s;
+                                if (s.getColour() == BLUE) cloneBlue = s;
+                            }
+
+                            RPNIMerge(clone, cloneRed, cloneBlue);
+                            queue.add(clone);
+                            blue.setColour(WHITE);
+                        }
+                    }
+                    red.setColour(WHITE);
+
+                }
+            }
+        }
+
+        return result;
+    }
 
     private static float TestAutomatonConsistency (Automaton origin, Automaton shrinked, Collection<String> example) {
         int consistent = 0;
@@ -212,15 +257,34 @@ public class Main {
         Automaton a = stringToAutomaton(strInput);
         ArrayList<String> example = new ArrayList<>(Arrays.asList("0", "1", "00", "111", "10", "0111"));
 
-        BufferedWriter writer = new BufferedWriter(new FileWriter("test.dot"));
-        writer.write(a.toDot());
-        writer.close();
+//        BufferedWriter writer = new BufferedWriter(new FileWriter("test.dot"));
+//        writer.write(a.toDot());
+//        writer.close();
+//
+//        Automaton result = RShrink(a, example, 3);
+//
+//        BufferedWriter writer1 = new BufferedWriter(new FileWriter("result-rshrink.dot"));
+//        writer1.write(result.toDot());
+//        writer1.close();
+//
+//        Automaton result1 = MostCons(a, example, 3);
+//
+//        BufferedWriter writer2 = new BufferedWriter(new FileWriter("result-mostcons.dot"));
+//        writer2.write(result1.toDot());
+//        writer2.close();
+//
+//        System.out.println(TestAutomatonConsistency(a, result, example));
+//        System.out.println(TestAutomatonConsistency(a, result1, example));
+//
+//        Automaton result1 = MostCons(a, example, 3);
 
-        Automaton result = Shrink(a, example);
 
-        BufferedWriter writer1 = new BufferedWriter(new FileWriter("result.dot"));
-        writer1.write(result.toDot());
-        writer1.close();
+        Automaton result3 = TestGenerator.GenerateAutomaton(20);
+        BufferedWriter writer3 = new BufferedWriter(new FileWriter("result-PTA.dot"));
+        writer3.write(result3.toDot());
+        writer3.close();
+        System.out.println(result3.getNumberOfStates());
+        System.out.println(result3.getStates().size());
     }
 }
 

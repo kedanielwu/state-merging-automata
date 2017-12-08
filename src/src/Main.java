@@ -12,7 +12,7 @@ public class Main {
     static int RED = 1;
     static int BLUE = 2;
 
-    public static Automaton Shrink (Automaton A, Collection<String> example) {
+    public static Automaton shrink (Automaton A, Collection<String> example) {
         Automaton result = null;
         float score = 0.0f;
 
@@ -36,7 +36,7 @@ public class Main {
                     }
 
                     RPNI.merge(clone, cloneRed, cloneBlue);
-                    float testScore = TestAutomatonConsistency(A, clone, example);
+                    float testScore = testAutomatonConsistency(A, clone, example);
                     if (testScore > score) {
                         result = clone;
                         score = testScore;
@@ -52,16 +52,16 @@ public class Main {
         return result;
     }
 
-    public static Automaton RShrink(Automaton A, Collection<String> example, int limit) {
+    public static Automaton rShrink(Automaton A, Collection<String> example, int limit) {
         Automaton shrunk = Shrink(A, example);
         if (shrunk.getStates().size() > limit)
-            return RShrink(shrunk, example, limit);
+            return rShrink(shrunk, example, limit);
         else
             return shrunk;
         
     }
 
-    public static Automaton MostCons(Automaton A, Collection<String> example, int limit) {
+    public static Automaton mostCons(Automaton A, Collection<String> example, int limit) {
         Automaton result = null;
         float maxConsistency = 0;
         Queue<Automaton> queue = new LinkedList<>();
@@ -69,7 +69,7 @@ public class Main {
         while (!queue.isEmpty()) {
             Automaton current = queue.remove();
             if (current.getStates().size() <= limit) {
-                float consistency = TestAutomatonConsistency(A, current, example);
+                float consistency = testAutomatonConsistency(A, current, example);
                 if (consistency > maxConsistency) {
                     maxConsistency = consistency;
                     result = current;
@@ -108,7 +108,7 @@ public class Main {
         return result;
     }
 
-    private static float TestAutomatonConsistency (Automaton origin, Automaton shrinked, Collection<String> example) {
+    private static float testAutomatonConsistency (Automaton origin, Automaton shrinked, Collection<String> example) {
         int consistent = 0;
         for (String s : example) {
             if (origin.run(s) == shrinked.run(s)) consistent++;
@@ -117,6 +117,9 @@ public class Main {
     }
 
     public static void main(String[] args) throws Exception {
+
+
+
         String strInput =
                     "s1 Y N 1-s2 0-s3 \n" +
                             "s2 N N 1-s4 0-s5\n" +

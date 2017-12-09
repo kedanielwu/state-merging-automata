@@ -39,7 +39,6 @@ public class Parser {
         //create DFA
         Automaton out = new Automaton();
         out.setInitialState(states.get(initial));
-        System.out.println(out);
         return out;
     }
 

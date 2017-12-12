@@ -21,3 +21,23 @@ Options:
  -m              Reduce DFA using most-cons instead of default R-Shrink
  -s <Filename>   Save string representation of reduced DFA
  ```
+
+ ### Automaton File Template
+```
+ [statename] [initial?] [accept?] [transitions...]
+ [statename] [initial?] [accept?] [transitions...]
+```
+ Example:
+
+ ```
+s1 Y N 1-s2 0-s3
+s2 N N 1-s4 0-s5
+s3 N N 1-s6 0-s7
+s4 N Y 1-s8
+s5 N N 1-s7 0-s6
+s6 N N
+s7 N N
+s8 N N 1-s8
+ ```
+
+ ![](example.jpg)

@@ -1,0 +1,34 @@
+
+
+InferrerTest.java: Unit Tests
+|---testRShrinkWithEmptyExample
+|---testRShrinkWithNegativeK
+|---testRShrinkWithNullAutomaton
+|---testMostConsWithEmptyExample
+|---testMostConsWithNegativeK
+|---testMostConsWithNullAutomaton
+|---testRShrinkWithEightStatesToFiveStates
+|---testMostConsWithEightStatesToFiveStates
+
+ParserTest.java: Unit Tests
+|---TestSimpleStringToAutomaton
+|---TestAutomatonToString
+
+TestGeneratorTest.java: Unit Tests
+|---testGenerateRandomExamplesWithNegativeCount
+|---testGenerateRandomExamplesWithNegativeBound
+|---testGenerateRandomExamplesWithPositiveBoundAndCount
+|---testGenerateRandomExamplesWithOnlyPositiveBound 
+|---testGenerateAcceptedExamplesFromAutomaton 
+|---testGenerateAcceptedExamplesFromAutomatonWithNullAutomaton 
+|---testGeneratePTAWithEmptyExampleSet 
+|---testGeneratePTAWithNullExampleSet 
+|---testGeneratePTAt 
+
+MergerTest.java: Unit Tests
+|---testMergeWithNullBlueState
+|---testMergeWithNullRedState
+|---testMergeWithSameRedBlueState
+|---testMergeWithRedStateNotInAutomaton
+|---testMergeWithBlueStateNotInAutomaton
+|---testMerge

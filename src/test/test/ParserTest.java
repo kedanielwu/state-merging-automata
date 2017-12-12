@@ -1,6 +1,7 @@
 import dk.brics.automaton.Automaton;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.Assertions;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ParserTest {
 
@@ -13,14 +14,14 @@ public class ParserTest {
                 "s5 N Y \n";
         Automaton automaton = Parser.stringToAutomaton(strInput);
 
-        Assertions.assertEquals(5, automaton.getNumberOfStates());
+        assertEquals(5, automaton.getNumberOfStates());
 
-        Assertions.assertEquals(false, automaton.run("00"));
-        Assertions.assertEquals(false, automaton.run("100"));
-        Assertions.assertEquals(true, automaton.run("0"));
-        Assertions.assertEquals(true, automaton.run("10"));
-        Assertions.assertEquals(true, automaton.run("111"));
-        Assertions.assertEquals(true, automaton.run("1111"));
+        assertEquals(false, automaton.run("00"));
+        assertEquals(false, automaton.run("100"));
+        assertEquals(true, automaton.run("0"));
+        assertEquals(true, automaton.run("10"));
+        assertEquals(true, automaton.run("111"));
+        assertEquals(true, automaton.run("1111"));
     }
 
     @Test
@@ -30,7 +31,7 @@ public class ParserTest {
 
         String string = Parser.automatonToString(automaton);
 
-        Assertions.assertEquals(automaton.getNumberOfStates(), string.split("\n").length);
+        assertEquals(automaton.getNumberOfStates(), string.split("\n").length);
     }
 
 }

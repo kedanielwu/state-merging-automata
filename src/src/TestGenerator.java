@@ -12,21 +12,38 @@ public class TestGenerator {
     private static final int MAX = 233333;
 
 
-    public static Set<String> generateExamples(int count, int bound) {
-        if (bound <= 0) throw new IllegalArgumentException();
+    public static Set<String> generateRandomExamples(int count, int bound) {
+        if (bound <= 0 || count <= 0) throw new IllegalArgumentException();
         Set<String> examples = new HashSet<>();
         while (examples.size() < count) {
             String randS = Integer.toBinaryString(random.nextInt(bound));
-            examples.add(randS.substring(1));
+            if (randS.length() > 1)
+                examples.add(randS.substring(1));
+        }
+
+        return examples;
+    }
+
+    public static Set<String> generateRandomExamples(int count) {
+        return generateRandomExamples(count, MAX);
+    }
+
+    public static Set<String> generateAcceptedExamplesFromAutomaton (Automaton A, int lowerbound) {
+        if (A == null) throw new IllegalArgumentException();
+
+        Set<String> examples = new HashSet<>();
+        int count = 1;
+        while (examples.size() < lowerbound) {
+            Set<String> accepted = A.getStrings(count);
+            examples.addAll(accepted);
+            count++;
+            if (count > 1000 & accepted.isEmpty()) break;
         }
         return examples;
     }
 
-    public static Set<String> generateExamples(int count) {
-        return generateExamples(count, MAX);
-    }
-
     public static Automaton generatePTA (Collection<String> example) {
+        if (example == null || example.isEmpty()) throw new IllegalArgumentException();
         Automaton result = new Automaton();
         State init = new State();
         result.setInitialState(init);
@@ -43,15 +60,13 @@ public class TestGenerator {
             }
             curr.setAccept(true);
         }
-
-
         return result;
     }
 
     public static Automaton generateAutomaton (int lowerbound) {
         Automaton result = new Automaton();
         Set<String> example = new HashSet<>();
-        for (String s : generateExamples(lowerbound/2)) {
+        for (String s : generateRandomExamples(lowerbound/2)) {
             example.add(s.substring(0, s.length()/2));
             example.add(s.substring(s.length()/2));
         }

@@ -1,6 +1,8 @@
 # CSC410 Project: Inferring Automata using State-merging
 
-## Required package
+## Required packages
+
+Download, build, and add to dependencies (we used IntelliJ)
 
 ### dk.brics.automaton
 
@@ -9,6 +11,12 @@
 ### Apache Common CLI
 
 https://commons.apache.org/proper/commons-cli/index.htm
+
+### JUnit 5
+
+http://junit.org/junit5/
+
+
 
 ## Usage
 

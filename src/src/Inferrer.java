@@ -14,7 +14,7 @@ public class Inferrer {
     private static Automaton shrink (Automaton A, Collection<String> example) {
         Automaton result = null;
         float score = 0.0f;
-
+        int originalSize = A.getNumberOfStates();
         Set<State> allStates = A.getStates();
 
         for (State s : allStates) {
@@ -24,6 +24,7 @@ public class Inferrer {
         for (State red : allStates) {
             red.setColour(RED);
             for (State blue : allStates) {
+
                 if (!A.getInitialState().equals(blue) && !blue.equals(red)) {
                     blue.setColour(BLUE);
                     Automaton clone = A.clone();
@@ -34,9 +35,10 @@ public class Inferrer {
                         if (s.getColour() == BLUE) cloneBlue = s;
                     }
 
-                    RPNI.merge(clone, cloneRed, cloneBlue);
+                    Merger.merge(clone, cloneRed, cloneBlue);
                     float testScore = testAutomatonConsistency(A, clone, example);
-                    if (testScore > score) {
+
+                    if (testScore > score && clone.getNumberOfStates() <= originalSize) {
                         result = clone;
                         score = testScore;
                     }
@@ -51,20 +53,34 @@ public class Inferrer {
     }
 
     public static Automaton rShrink(Automaton A, Collection<String> example, int limit) {
+
+        if (example.isEmpty() || limit < 0 || A == null)
+            throw new IllegalArgumentException();
+
+        System.out.println(String.format("Current number of stages: %d", A.getNumberOfStates()));
         Automaton shrunk = shrink(A, example);
         if (shrunk.getStates().size() > limit)
             return rShrink(shrunk, example, limit);
-        else
+        else {
+            System.out.println(String.format(
+                    "Consistency using R-Shrink: %f", Inferrer.testAutomatonConsistency(A, shrunk, example)));
+
             return shrunk;
+        }
     }
 
     public static Automaton mostCons(Automaton A, Collection<String> example, int limit) {
+
+        if (example.isEmpty() || limit < 0 || A == null)
+            throw new IllegalArgumentException();
+
         Automaton result = null;
         float maxConsistency = 0;
         Queue<Automaton> queue = new LinkedList<>();
         queue.add(A);
         while (!queue.isEmpty()) {
             Automaton current = queue.remove();
+            System.out.println(String.format("Current count in queue: %d", queue.size()));
             if (current.getStates().size() <= limit) {
                 float consistency = testAutomatonConsistency(A, current, example);
                 if (consistency > maxConsistency) {
@@ -91,8 +107,9 @@ public class Inferrer {
                                 if (s.getColour() == BLUE) cloneBlue = s;
                             }
 
-                            RPNI.merge(clone, cloneRed, cloneBlue);
-                            queue.add(clone);
+                            Merger.merge(clone, cloneRed, cloneBlue);
+                            if (clone.getNumberOfStates() < current.getNumberOfStates())
+                                queue.add(clone);
                             blue.setColour(WHITE);
                         }
                     }
@@ -101,6 +118,9 @@ public class Inferrer {
                 }
             }
         }
+
+        System.out.println(String.format(
+                "Consistency using Most-Cons: %f", Inferrer.testAutomatonConsistency(A, result, example)));
 
         return result;
     }

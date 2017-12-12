@@ -1,0 +1,16 @@
+s1 Y N 1-s2 0-s3
+s2 N N 1-s4 0-s5
+s3 N N 1-s6 0-s7
+s4 N Y 1-s8 0-s9
+s5 N N 1-s10 0-s11
+s6 N N 1-s12 0-s13
+s7 N N 1-s14 0-s15
+s8 N N 1-s8 0-s9
+s9 N Y 1-s8 0-s9
+s10 N Y 1-s11
+s11 N Y 0-s12
+s12 N N 0-s13
+s13 N Y 0-s10 1-s14
+s14 N N 1-s15 0-s16
+s15 N N 1-s16
+s16 N Y 1-s14 0-s8

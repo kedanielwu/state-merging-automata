@@ -1,6 +1,5 @@
 import dk.brics.automaton.Automaton;
 import dk.brics.automaton.State;
-import dk.brics.automaton.StatePair;
 import dk.brics.automaton.Transition;
 
 import java.util.*;
@@ -11,7 +10,7 @@ public class Merger {
         Set<State> allStates = A.getStates();
 
         if (red == null || blue == null)
-            throw new NullPointerException();
+            throw new IllegalArgumentException();
 
         if (!allStates.contains(blue))
             throw new IllegalArgumentException();
@@ -40,26 +39,6 @@ public class Merger {
 
         A.setDeterministic(false);
         A.determinize();
-
-//        String chars = "01";
-//
-//        for (char c : chars.toCharArray()) {
-//            Set<State> destSet = new HashSet<>();
-//            red.step(c, destSet);
-//            List<State> dests = new ArrayList<>(destSet);
-//
-//            while (dests.size() > 1) {
-////                System.out.println("dests: "+dests);
-////                System.out.println("dests size: "+dests.size());
-//                merge(A, dests.get(0), dests.get(1));
-//            }
-//        }
-
-
-
-
-//        fold(A, red, blue);
-
     }
 
     public static void fold (Automaton A, State red, State blue) {

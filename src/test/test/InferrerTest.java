@@ -105,7 +105,7 @@ public class InferrerTest {
 
         assertTrue(mostConsResult.getNumberOfStates() <= k);
 
-        assertTrue(Inferrer.testAutomatonConsistency(automaton, mostConsResult, example)
-                >= Inferrer.testAutomatonConsistency(automaton, rShrinkResult, example));
+        assertTrue(Float.compare(Inferrer.testAutomatonConsistency(automaton, mostConsResult, example)
+                ,Inferrer.testAutomatonConsistency(automaton, rShrinkResult, example)) >= 0);
     }
 }

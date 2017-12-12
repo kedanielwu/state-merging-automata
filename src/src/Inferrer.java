@@ -1,6 +1,8 @@
 import dk.brics.automaton.Automaton;
 import dk.brics.automaton.State;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.Queue;
@@ -38,7 +40,7 @@ public class Inferrer {
                     Merger.merge(clone, cloneRed, cloneBlue);
                     float testScore = testAutomatonConsistency(A, clone, example);
 
-                    if (testScore > score && clone.getNumberOfStates() <= originalSize) {
+                    if (testScore > score && clone.getNumberOfStates() < originalSize) {
                         result = clone;
                         score = testScore;
                     }
@@ -68,6 +70,32 @@ public class Inferrer {
             return shrunk;
         }
     }
+
+    public static Automaton rShrinkOutput(Automaton A, Collection<String> example, int limit) {
+
+        if (example.isEmpty() || limit < 0 || A == null)
+            throw new IllegalArgumentException();
+
+        System.out.println(String.format("Current number of stages: %d", A.getNumberOfStates()));
+        Automaton shrunk = shrink(A, example);
+        if (shrunk.getStates().size() > limit) {
+            try {
+                BufferedWriter writer = new BufferedWriter(new FileWriter(String.format("Step_%d.dot", shrunk.getNumberOfStates())));
+                writer.write(shrunk.toDot());
+                writer.close();
+            } catch (Exception e) {
+
+            }
+            return rShrinkOutput(shrunk, example, limit);
+
+        } else {
+            System.out.println(String.format(
+                    "Consistency using R-Shrink: %f", Inferrer.testAutomatonConsistency(A, shrunk, example)));
+
+            return shrunk;
+        }
+    }
+
 
     public static Automaton mostCons(Automaton A, Collection<String> example, int limit) {
 

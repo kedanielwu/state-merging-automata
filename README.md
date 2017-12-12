@@ -27,6 +27,7 @@ Options:
  -e <Filename>   Use examples from file, otherwise use generated random
                  examples
  -m              Reduce DFA using most-cons instead of default R-Shrink
+ -r              Output each step in R-shrink
  -s <Filename>   Save string representation of reduced DFA
  ```
 

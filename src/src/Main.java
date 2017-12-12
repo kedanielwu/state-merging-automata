@@ -24,6 +24,7 @@ public class Main {
                 .optionalArg(true)
                 .build());
         options.addOption("m", "Reduce DFA using most-cons instead of default R-Shrink");
+        options.addOption("r", "Output each step in R-shrink");
         options.addOption(Option.builder("d")
                 .argName("Filename")
                 .desc("Save Graphviz Dot representation of reduced DFA")
@@ -87,8 +88,14 @@ public class Main {
 
             if (cmd.hasOption("m"))
                 result = Inferrer.mostCons(automaton, examples, k);
-            else
-               result = Inferrer.rShrink(automaton, examples, k);
+            else {
+
+                if (cmd.hasOption("r"))
+                    result = Inferrer.rShrinkOutput(automaton, examples, k);
+                else
+                    result = Inferrer.rShrink(automaton, examples, k);
+            }
+
 
             if (result == null)
                 throw new IllegalStateException("Fail");

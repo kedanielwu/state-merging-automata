@@ -1,6 +1,21 @@
+ComprehensiveTest.java:
 
+In this file, three DFAs are tested with 3000-4000 binary string examples (half positive and half negative).
+The first DFA is a simple 8-state DFA. The second one is a 20-state PTA. The third one is a intentionally complicated 16-state DFA.
 
-InferrerTest.java: Unit Tests
++-----------+--------------+--------------+-------------------------+--------------------------+
+| Test Case |  # of states | reduced to K | Consistency w/ R-shrink | Consistency w/ Most-Cons |
++-----------+--------------+--------------+-------------------------+--------------------------+
+| 1         | 8            | 5            | 1.00                    | 1.00                     |
++-----------+--------------+--------------+-------------------------+--------------------------+
+| 2         | 20           | 10           | 1.00                    | 1.00                     |
++-----------+--------------+--------------+-------------------------+--------------------------+
+| 3         | 16           | 8            |  |        |
++-----------+--------------+--------------+-------------------------+--------------------------+
+
+The followings are unit tests for each class:
+
+InferrerTest.java:
 |---testRShrinkWithEmptyExample
 |---testRShrinkWithNegativeK
 |---testRShrinkWithNullAutomaton
@@ -10,11 +25,11 @@ InferrerTest.java: Unit Tests
 |---testRShrinkWithEightStatesToFiveStates
 |---testMostConsWithEightStatesToFiveStates
 
-ParserTest.java: Unit Tests
+ParserTest.java:
 |---TestSimpleStringToAutomaton
 |---TestAutomatonToString
 
-TestGeneratorTest.java: Unit Tests
+TestGeneratorTest.java:
 |---testGenerateRandomExamplesWithNegativeCount
 |---testGenerateRandomExamplesWithNegativeBound
 |---testGenerateRandomExamplesWithPositiveBoundAndCount
@@ -25,7 +40,7 @@ TestGeneratorTest.java: Unit Tests
 |---testGeneratePTAWithNullExampleSet 
 |---testGeneratePTAt 
 
-MergerTest.java: Unit Tests
+MergerTest.java:
 |---testMergeWithNullBlueState
 |---testMergeWithNullRedState
 |---testMergeWithSameRedBlueState

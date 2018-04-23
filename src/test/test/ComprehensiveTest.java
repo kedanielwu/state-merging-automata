@@ -90,7 +90,7 @@ public class ComprehensiveTest {
 
     }
 
-//    @Test
+    @Test
     void testRShrinkWithSixteenStatesDFAToEightStates () {
 
         LoadTest(3);
@@ -100,7 +100,7 @@ public class ComprehensiveTest {
         assertTrue(result.getNumberOfStates() <= k);
     }
 
-//    @Test
+    @Test
     void testMostConskWithSixteenStatesDFAToEightStates () {
 
         LoadTest(3);
